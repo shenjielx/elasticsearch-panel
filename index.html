@@ -9,15 +9,6 @@
 		<link rel="stylesheet" href="./css/basic.css">
 		<script src="./js/jquery-1.10.2.min.js"></script>
 		<script src="./js/bootstrap.min.js"></script>
-		<script>
-			var url="http://112.124.51.187:9200";
-			//url=location.href;
-			window.onload = function() {
-				if(url.indexOf("/_plugin/")>0) {
-					var base_uri = url.replace(/_plugin\/.*/, '');
-				}
-			};
-		</script>
 		<link rel="icon" href="./img/logo.png" type="image/png">
 	</head>
 	<body>
@@ -220,7 +211,11 @@
 				</div>
 
 				<div class="panel panel-default">
-				  <div class="panel-heading"><label>查询结果：</label><span> 查询总数：1,234,567条</span></div>
+				  <div class="panel-heading">
+						<label>查询结果：</label>
+						<span> 查询总数：1,234,567条</span>
+						<span> 耗时：0.012秒</span>
+					</div>
 				  <div class="panel-body" style="padding: 0px;overflow-x: scroll;">
 						<table class="table table-bordered table-hover" style="margin-bottom: 0px;border: 0px;">
 						      <thead>

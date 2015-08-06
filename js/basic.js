@@ -1,7 +1,13 @@
 var statistics = function () {
     var url=$(".J_connectUrl").val();//"http://112.124.51.187:9200/";
+    if (location.href.indexOf("http://")>0) {
+      url=location.href;
+      if(url.indexOf("/_plugin/")>0) {
+        var base_uri = url.replace(/_plugin\/.*/, '');
+      }
+    }
     if (url.length<1) {
-      url="http://112.124.51.187:9200/";
+      url="http://localhost:9200/";
     }
     //url=location.href;
 
