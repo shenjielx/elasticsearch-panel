@@ -25,8 +25,13 @@
 				<h1 style="padding-left:2%; padding-right:2%;">
 					<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
 					<span> elasticsearch-control</span>
+
+					<label class="form-label pull-right J_connectWarning" style="color:red;"></label>
+					<button type="button" class="btn btn-primary btnConnect pull-right" data-loading-text="Loading..." autocomplete="off">连接</button>
+					<input type="text" class="form-control pull-right J_connectUrl" placeholder="如：http://localhost:9200/" style="max-width:320px;">
+					<label class="form-label pull-right">ES集群节点：</label>
 				</h1>
-				<hr>
+				<hr style="margin-top: 0px; margin-bottom: 10px;">
 		</div>
 		<div class="container-fluid">
 
@@ -61,53 +66,17 @@
 				      </div>
 				    </div>
 				  </div>
-				  <div class="panel panel-default">
-				    <div class="panel-heading" role="tab" id="headingThree">
-				      <h4 class="panel-title">
-				        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-				          Collapsible Group Item #3
-				        </a>
-				      </h4>
-				    </div>
-				    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-				      <div class="panel-body">
-				        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-				      </div>
-				    </div>
-				  </div>
-				</div>
 
-
-			</div>
-
-			<div class="col-md-9 col-xs-8 col-sm-6" style="padding-right:0px;padding-left:5px;">
-				<div class="col-md-6 col-xs-6 col-sm-6" style="padding:0;padding-right:10px;">
 					<div class="panel panel-default">
-					  <div class="panel-heading"><label>选择文档</label></div>
-					  <div class="panel-body">
-							<select class="searchDocs form-control pull-left" name="searchDocs" style="min-width:150px;">
-								<option value="">请选择</option>
-							</select>
-					  </div>
-						<div class="panel-footer">
-							<input type="checkbox" class="chkShowJson" checked="true" />
-							<span class="form-label">显示查询语句</span>
+						<div class="panel-heading" role="tab" id="headingThree">
+							<h4 class="panel-title">
+								<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse_search_json" aria-expanded="true" aria-controls="collapse_search_json">
+									查询语句
+								</a>
+							</h4>
 						</div>
-					</div>
-				</div>
-
-				<div class="col-md-6 col-xs-6 col-sm-6" style="padding:0;">
-				<div class="panel-group" id="accordion_json" role="tablist" aria-multiselectable="true">
-				  <div class="panel panel-default">
-				    <div class="panel-heading" role="tab" id="headingOne">
-				      <h4 class="panel-title">
-				        <a role="button" data-toggle="collapse" data-parent="#accordion_json" href="#collapse_search_json" aria-expanded="true" aria-controls="collapse_search_json">
-				        	查询语句
-				        </a>
-				      </h4>
-				    </div>
-				    <div id="collapse_search_json" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-				      <div class="panel-body">
+						<div id="collapse_search_json" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+							<div class="panel-body">
 										<pre>
 											<div>{</div>
 											<div> "query": {</div>
@@ -127,28 +96,34 @@
 											<div> "facets": { }</div>
 											<div>}</div>
 										</pre>
-									</div>
-									<div class="panel-footer">
-										<a class="form-label" href="javascript:;">格式化Json字符串</a>
-									</div>
-									<div class="panel-body">
-										Panel content
-									</div>
-				      </div>
-				    </div>
-				  </div>
+							</div>
+							<div class="panel-footer">
+								<a class="form-label" href="javascript:;">格式化Json字符串</a>
+							</div>
+					</div>
 				</div>
-				<div class="clearfix"></div>
+
+
+				</div>
+
+
+			</div>
+
+			<div class="col-md-9 col-xs-8 col-sm-6" style="padding-right:0px;padding-left:5px;">
 
 				<div class="panel panel-default">
 				  <div class="panel-heading">
-						<label>查询条件：</label>
+						<select class="searchDocs form-control pull-left" name="searchDocs" style="max-width:320px;margin-top: -6px;">
+							<option value="">请选择查询文档</option>
+						</select>
+						<input type="checkbox" class="chkShowJson" checked="true" />
+						<span class="form-label">显示查询语句</span>
 					</div>
-				  <div class="panel-body">
+				  <div class="panel-body" style="padding-left:0px;padding-right:0px;padding-bottom:0px;">
 						<dl class="dl-horizontal">
 							<dt><label class="form-label">基本查询条件：</label></dt>
-							<dd>
-								<div class="searchBasic">
+							<dd class="searchBasic">
+								<div class="search-column">
 									<select class="searchBool form-control pull-left" name="searchBool" style="max-width:150px;">
 										<option value="must">must</option>
 										<option value="must_not">must_not</option>
@@ -157,16 +132,19 @@
 									<select class="searchField form-control pull-left" name="searchField" style="max-width:150px;">
 										<option value="">请选择</option>
 									</select>
-									<button type="button" id="btnAdd" data-loading-text="Loading..." class="btn btn-primary" autocomplete="off">添加条件</button>
-									<button type="button" id="btnDel" data-loading-text="Loading..." class="btn btn-danger" autocomplete="off">删除</button>
+									<span>
+										<button type="button" class="btn btn-primary btnAdd" data-loading-text="Loading..." autocomplete="off">添加条件</button>
+									</span>
+									<button type="button" class="btn btn-danger btnDel" data-loading-text="Loading..." autocomplete="off">删除</button>
+									<div class="clearfix"></div>
 								</div>
 							</dd>
 						</dl>
 
 						<dl class="dl-horizontal">
 							<dt><label class="form-label">复合字段条件：</label></dt>
-							<dd>
-								<div class="searchComplex">
+							<dd class="searchComplex">
+								<div class="search-column">
 									<select class="searchBool form-control pull-left" name="searchBool" style="max-width:150px;">
 										<option value="must">must</option>
 										<option value="must_not">must_not</option>
@@ -175,8 +153,11 @@
 									<select class="searchField form-control pull-left" name="searchField" style="max-width:150px;">
 										<option value="">请选择</option>
 									</select>
-									<button type="button" id="btnAdd" data-loading-text="Loading..." class="btn btn-primary" autocomplete="off">添加条件</button>
-									<button type="button" id="btnDel" data-loading-text="Loading..." class="btn btn-danger" autocomplete="off">删除</button>
+									<span>
+										<button type="button" class="btn btn-primary btnAdd" data-loading-text="Loading..." autocomplete="off">添加条件</button>
+									</span>
+									<button type="button" class="btn btn-danger btnDel" data-loading-text="Loading..." autocomplete="off">删除</button>
+									<div class="clearfix"></div>
 								</div>
 							</dd>
 						</dl>
@@ -189,18 +170,18 @@
 								<option value="">请选择</option>
 							</select>
 							<label class="form-label pull-left">排序类型：</label>
-							<select class="sortType form-control pull-left" name="sortType" style="max-width:120px;">
-								<option value="desc">倒序[DESC]</option>
+							<select class="sortType form-control pull-left" name="sortType" style="max-width:130px;">
+								<option value="desc">降序[DESC]</option>
 								<option value="asc">升序[ASC]</option>
 							</select>
 							<label class="form-label pull-left">返回格式：</label>
-							<select class="backFormat form-control pull-left" name="backFormat" style="max-width:120px;">
+							<select class="backFormat form-control pull-left" name="backFormat" style="max-width:90px;">
 								<option value="table">Table</option>
 								<option value="json">JSON</option>
 								<option value="csv">CSV</option>
 							</select>
 							<label class="form-label pull-left">每页显示数量：</label>
-							<select class="pageSize form-control" name="pageSize" style="max-width:120px;">
+							<select class="pageSize form-control" name="pageSize" style="max-width:90px;">
 								<option value="10">10</option>
 								<option value="50">50</option>
 								<option value="250">250</option>
@@ -213,14 +194,35 @@
 				</div>
 
 				<div class="clearfix"></div>
+
+				<div class="panel-group" id="accordion_json" role="tablist" aria-multiselectable="true" style="margin-bottom: 10px;">
+
+					<div class="panel panel-default">
+				    <div class="panel-heading" role="tab" id="headingOne">
+				      <h4 class="panel-title">
+				        <a role="button" data-toggle="collapse" data-parent="#accordion_json" href="#collapse_field" aria-expanded="true" aria-controls="collapse_field">
+				        	选择返回的字段(默认全部)
+				        </a>
+				      </h4>
+				    </div>
+				    <div id="collapse_field" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+				      <div class="panel-body">
+
+				      </div>
+				    </div>
+					</div>
+
+				</div>
+				<div class="clearfix"></div>
+
 				<div style="margin-bottom:10px;">
 					<button type="button" id="btnSearch" data-loading-text="Loading..."  class="btn btn-primary col-md-4 col-xs-5 col-sm-6" autocomplete="off" style="float: none;">查询</button>
 				</div>
 
 				<div class="panel panel-default">
 				  <div class="panel-heading"><label>查询结果：</label><span> 查询总数：1,234,567条</span></div>
-				  <div class="panel-body">
-						<table class="table table-bordered table-hover" style="margin-bottom: 0px;">
+				  <div class="panel-body" style="padding: 0px;overflow-x: scroll;">
+						<table class="table table-bordered table-hover" style="margin-bottom: 0px;border: 0px;">
 						      <thead>
 						        <tr>
 						          <th style="width:80px;">序号 <a class="glyphicon glyphicon-triangle-right pull-right J_flexShow" aria-hidden="true" href="javascript:;" style="display:none;"></a></th>
@@ -302,6 +304,7 @@
 		</div>
 
 
+		<script src="./layer/layer.js"></script>
 		<script src="./js/basic.js"></script>
 		<script type="text/javascript">
 
