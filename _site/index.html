@@ -115,19 +115,23 @@
 							<dt><label class="form-label">基本查询条件：</label></dt>
 							<dd class="searchBasic">
 								<div class="search-column">
-									<select class="searchBool form-control pull-left" name="searchBool" style="max-width:150px;">
-										<option value="must">must</option>
-										<option value="must_not">must_not</option>
-										<option value="should">should</option>
-									</select>
-									<select class="searchField form-control pull-left" name="searchField" style="max-width:150px;">
-										<option value="">请选择</option>
-									</select>
+									<span>
+										<select class="searchBool form-control pull-left" name="searchBool" style="max-width:110px;">
+											<option value="must">must</option>
+											<option value="must_not">must_not</option>
+											<option value="should">should</option>
+										</select>
+										<select class="searchField form-control pull-left" name="searchField" style="min-width:120px;max-width:320px;width:auto">
+											<option value="">请选择</option>
+										</select>
+									</span>
 									<span>
 										<button type="button" class="btn btn-primary btnAdd" data-loading-text="Loading..." autocomplete="off">添加条件</button>
 									</span>
-									<button type="button" class="btn btn-danger btnDel" data-loading-text="Loading..." autocomplete="off">删除</button>
-									<div class="clearfix"></div>
+									<span>
+										<button type="button" class="btn btn-danger btnDel" data-loading-text="Loading..." autocomplete="off">删除</button>
+										<div class="clearfix"></div>
+								</span>
 								</div>
 							</dd>
 						</dl>
@@ -136,12 +140,12 @@
 							<dt><label class="form-label">复合字段条件：</label></dt>
 							<dd class="searchComplex">
 								<div class="search-column">
-									<select class="searchBool form-control pull-left" name="searchBool" style="max-width:150px;">
+									<select class="searchBool form-control pull-left" name="searchBool" style="max-width:110px;">
 										<option value="must">must</option>
 										<option value="must_not">must_not</option>
 										<option value="should">should</option>
 									</select>
-									<select class="searchField form-control pull-left" name="searchField" style="max-width:150px;">
+									<select class="searchField form-control pull-left" name="searchField" style="min-width:120px;max-width:320px;width:auto">
 										<option value="">请选择</option>
 									</select>
 									<span>
@@ -157,28 +161,13 @@
 					<div class="panel-footer">
 						<div>
 							<label class="form-label pull-left">排序字段：</label>
-							<select class="sortField form-control pull-left" name="sortField" style="max-width:150px;">
+							<select class="sortField form-control pull-left" name="sortField" style="min-width:120px;max-width:300px;width:auto">
 								<option value="">请选择</option>
 							</select>
 							<label class="form-label pull-left">排序类型：</label>
-							<select class="sortType form-control pull-left" name="sortType" style="max-width:130px;">
+							<select class="sortType form-control" name="sortType" style="max-width:130px;">
 								<option value="desc">降序[DESC]</option>
 								<option value="asc">升序[ASC]</option>
-							</select>
-							<label class="form-label pull-left">返回格式：</label>
-							<select class="backFormat form-control pull-left" name="backFormat" style="max-width:90px;">
-								<option value="table">Table</option>
-								<option value="json">JSON</option>
-								<option value="csv">CSV</option>
-							</select>
-							<label class="form-label pull-left">每页显示数量：</label>
-							<select class="pageSize form-control" name="pageSize" style="max-width:90px;">
-								<option value="10">10</option>
-								<option value="50">50</option>
-								<option value="250">250</option>
-								<option value="1000">1000</option>
-								<option value="5000">5000</option>
-								<option value="25000">25000</option>
 							</select>
 						</div>
 					</div>
@@ -194,6 +183,7 @@
 				        <a role="button" data-toggle="collapse" data-parent="#accordion_json" href="#collapse_field" aria-expanded="true" aria-controls="collapse_field">
 				        	选择返回的字段(默认全部)
 				        </a>
+								<input type="checkbox" class="J_chkFields" checked="true" />
 				      </h4>
 				    </div>
 				    <div id="collapse_field" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
@@ -207,87 +197,37 @@
 				<div class="clearfix"></div>
 
 				<div style="margin-bottom:10px;">
+					<label class="form-label pull-left">返回格式：</label>
+					<select class="backFormat form-control pull-left" name="backFormat" style="max-width:90px;">
+						<option value="table">Table</option>
+						<option value="json">JSON</option>
+						<option value="csv">CSV</option>
+					</select>
+					<label class="form-label pull-left">每页显示数量：</label>
+					<select class="pageSize form-control pull-left" name="pageSize" style="max-width:90px;">
+						<option value="10">10</option>
+						<option value="20">20</option>
+						<option value="50">50</option>
+						<option value="250">250</option>
+						<option value="1000">1000</option>
+						<option value="5000">5000</option>
+						<option value="25000">25000</option>
+					</select>
 					<button type="button" id="btnSearch" data-loading-text="Loading..."  class="btn btn-primary col-md-4 col-xs-5 col-sm-6" autocomplete="off" style="float: none;">查询</button>
 				</div>
 
 				<div class="panel panel-default">
 				  <div class="panel-heading">
-						<label>查询结果：</label>
-						<span> 查询总数：1,234,567条</span>
-						<span> 耗时：0.012秒</span>
+						<span><label> 查询总数：</label><span id="search_total">--</span>条</span>
+						<span style="color:grey;margin-left:20px;"> 耗时：<span id="search_time">--</span>秒</span>
 					</div>
-				  <div class="panel-body" style="padding: 0px;overflow-x: scroll;">
-						<table class="table table-bordered table-hover" style="margin-bottom: 0px;border: 0px;">
-						      <thead>
-						        <tr>
-						          <th style="width:80px;">序号 <a class="glyphicon glyphicon-triangle-right pull-right J_flexShow" aria-hidden="true" href="javascript:;" style="display:none;"></a></th>
-						          <th class="J_flex" style="width:150px;">_index</th>
-						          <th class="J_flex" style="width:150px;">_type</th>
-						          <th class="J_flex" style="width:150px;">_score <a class="pull-right J_flexHide" href="javascript:;"><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"></span> 收缩</a></th>
-						          <th>_id</th>
-											<th>Name</th>
-											<th>Age</th>
-						        </tr>
-						      </thead>
-						      <tbody>
-						        <tr>
-						          <th scope="row">1</th>
-						          <td class="J_flex">mallcoo</td>
-						          <td class="J_flex">person</td>
-						          <td class="J_flex">1</td>
-						          <td>48:43:7c:61:3c:ee_42_</td>
-						          <td>测试</td>
-						          <td>19</td>
-						        </tr>
-						        <tr>
-						          <th scope="row">2</th>
-						          <td class="J_flex">mallcoo</td>
-						          <td class="J_flex">person</td>
-						          <td class="J_flex">1</td>
-						          <td>48:43:7c:61:3c:ee_42_</td>
-						          <td>测试</td>
-						          <td>19</td>
-						        </tr>
-						        <tr>
-						          <th scope="row">3</th>
-						          <td class="J_flex">mallcoo</td>
-						          <td class="J_flex">person</td>
-						          <td class="J_flex">1</td>
-						          <td>48:43:7c:61:3c:ee_42_</td>
-						          <td>测试</td>
-						          <td>19</td>
-						        </tr>
-						      </tbody>
-						    </table>
+				  <div class="panel-body J_result" style="padding: 10px 0px;overflow-x: scroll;">
+
 				  </div>
 					<div class="panel-footer">
 						<nav>
 						  <ul class="pagination">
-						    <li>
-						      <a href="#" aria-label="first">
-						        <span aria-hidden="true">首页</span>
-						      </a>
-						    </li>
-						    <li>
-						      <a href="#" aria-label="Previous">
-						        <span aria-hidden="true">上一页</span>
-						      </a>
-						    </li>
-						    <li class="active"><a href="#">1</a></li>
-						    <li><a href="#">2</a></li>
-						    <li><a href="#">3</a></li>
-						    <li><a href="#">4</a></li>
-						    <li><a href="#">5</a></li>
-						    <li>
-						      <a href="#" aria-label="Next">
-						        <span aria-hidden="true">下一页</span>
-						      </a>
-						    </li>
-								<li>
-						      <a href="#" aria-label="last">
-						        <span aria-hidden="true">尾页</span>
-						      </a>
-						    </li>
+
 						  </ul>
 						</nav>
 					</div>
@@ -301,10 +241,12 @@
 
 		<script src="./layer/layer.js"></script>
 		<script src="./js/basic.js"></script>
+		<script src="./js/search.js"></script>
 		<script type="text/javascript">
 
         jQuery(document).ready(function () {
             statistics.init();
+						search.init();
         });
 
     </script>
