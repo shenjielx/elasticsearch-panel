@@ -212,7 +212,7 @@ var statistics = function () {
       $("#search_time").text('--');
       $("#search_total").text('--');
       $(".J_result").html('');
-      var index = layer.load(2, {time: 30*1000,shade: [0.8, '#393D49']});
+      //var index = layer.load(2, {time: 30*1000,shade: [0.8, '#393D49']});
       var sel_docs=$(".searchDocs").val();
       var postData={};
       $.ajax({
@@ -223,10 +223,10 @@ var statistics = function () {
             var mapping=parseJsonToField(data["metadata"]["indices"][sel_docs]);
             $(".searchField").html(mapping);
             $(".sortField").html(mapping);
-            layer.close(index);
+            //layer.close(index);
           },
           error: function (res) {
-            layer.close(index);
+            //layer.close(index);
             layer.msg('获取文档mapping映射失败！',{shade: [0.8, '#393D49']});
           }
       });
