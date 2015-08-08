@@ -28,6 +28,7 @@ var statistics = function () {
           url: url,
           success: function (data) {
             var items = [];
+            $('#collapse_node_info .panel-body').html('');
 
             $.each(data, function(key, val) {  // key是序号:1,2,...., val是遍历值.
               items.push('<li id="' + key + '"><strong>'+key+'：</strong>');
@@ -67,6 +68,7 @@ var statistics = function () {
             url: url+"_status",
             success: function (data) {
               var items = [],docs=[];
+              $('#collapse_index_info .panel-body').html('');
 
               $.each(data, function(key, val) {  // key是序号:1,2,...., val是遍历值.
                 items.push('<li id="' + key + '"><strong>'+key+'：</strong>');
