@@ -67,11 +67,11 @@ var statistics = function () {
         for (var key in data) {
             var val = data[key];
             if (typeof(val) === 'object') {
-                items.push('<ul>');
                 items.push('<li id="' + key + '"><strong>'+key+'：</strong>');
+                items.push('<ul>');
                 items.concat(jsonToHtml(val));
-                items.push('</li>');
                 items.push('</ul>');
+                items.push('</li>');
             }else{
                 items.push('<li id="' + key + '"><strong>'+key+'：</strong>"' + val + '"</li>');
             }
