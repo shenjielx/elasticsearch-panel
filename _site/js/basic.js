@@ -70,7 +70,7 @@ var statistics = function () {
                 items.push('<li id="' + key + '"><strong>'+key+'：</strong>');
                 items.push('<ul>');
                 var temp = jsonToHtml(val);
-                items.concat(temp);
+                items = items.concat(temp);
                 items.push('</ul>');
                 items.push('</li>');
             }else{
