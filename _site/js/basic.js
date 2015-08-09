@@ -69,7 +69,8 @@ var statistics = function () {
             if (typeof(val) === 'object') {
                 items.push('<li id="' + key + '"><strong>'+key+'：</strong>');
                 items.push('<ul>');
-                items.concat(jsonToHtml(val));
+                var temp = jsonToHtml(val);
+                items.concat(temp);
                 items.push('</ul>');
                 items.push('</li>');
             }else{
