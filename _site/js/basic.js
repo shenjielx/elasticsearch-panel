@@ -29,8 +29,9 @@ var statistics = function () {
           success: function (data) {
             var items = [];
             $('#collapse_node_info .panel-body').html('');
+            items = jsonToHtml(data);
 
-            $.each(data, function(key, val) {  // key是序号:1,2,...., val是遍历值.
+            /*$.each(data, function(key, val) {  // key是序号:1,2,...., val是遍历值.
               items.push('<li id="' + key + '"><strong>'+key+'：</strong>');
               if (typeof(val) === 'object') {
                   items.push('<ul>');
@@ -42,7 +43,7 @@ var statistics = function () {
                   items.push('"'+val+'"');
               }
               items.push('</li>');
-            });
+            });*/
 
             $('<ul/>', {
               'class': 'my-new-list',
@@ -59,6 +60,25 @@ var statistics = function () {
       });
 
     }
+
+    // 解析json递归
+    var jsonToHtml = function(data){
+        var items = [];
+        for (var key in data) {
+            var val = data[key];
+            if (typeof(val) === 'object') {
+                items.push('<ul>');
+                items.push('<li id="' + key + '"><strong>'+key+'：</strong>');
+                jsonToHtml(val);
+                items.push('</li>');
+                items.push('</ul>');
+            }else{
+                items.push('<li id="' + key + '"><strong>'+key+'：</strong>"' + val + '"</li>');
+            }
+        }
+        return items;
+    }
+
     // 获取ElasticSearh基本节点信息
     var get_collapse_index_info = function () {
         var postData={};
@@ -69,8 +89,8 @@ var statistics = function () {
             success: function (data) {
               var items = [],docs=[];
               $('#collapse_index_info .panel-body').html('');
-
-              $.each(data, function(key, val) {  // key是序号:1,2,...., val是遍历值.
+              items = jsonToHtml(data);
+              /*$.each(data, function(key, val) {  // key是序号:1,2,...., val是遍历值.
                 items.push('<li id="' + key + '"><strong>'+key+'：</strong>');
                 if (typeof(val) === 'object') {
                     items.push('<ul>');
@@ -105,7 +125,7 @@ var statistics = function () {
                 }
                 items.push('</li>');
 
-              });
+              });*/
 
               docs.push(data["indices"]);
               set_docs_list(docs);
