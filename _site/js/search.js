@@ -43,13 +43,43 @@ var search = function () {
       var sortField = $(".sortField").val();
     	if (sortField != "match_all" && sortField != "_all" && sortField.length>1) {
     		var sortType = $(".sortType").val();
-    		var sortinfo = {};
-    		sortinfo = {sortField:{ "order": sortType }};
+    		var sortinfo = {}, sortfield = {};
+        sortfield[sortField] = { "order": sortType };
+    		sortinfo = [sortfield];
     		postData.sort=sortinfo;
     	}
+      // 基本条件
+      postData.query = get_basic_condition();
+
       var result = postData;
       result = JSON.stringify(postData);
       return result;
+    }
+
+    // 获取基本查询条件
+    var get_basic_condition = function(){
+        var query = {
+          bool:{
+            must:[],
+            must_not:[],
+            should:[]
+          }
+        };
+        var list = $(".searchBasic .search-column");
+        $.each(list,function(key,val){
+            var bool_val = $(this).find(".searchBool").val();
+            var field_val = $(this).find(".searchField").val();
+            var op_val = $(this).find(".searchOperation").val();
+            var val = $(this).find(".searchInput").val();
+            if (op_val && val != null && val.length > 0) {
+                // 有该选项才是有用的操作条件
+                var field = {}, op = {};
+                field[field_val] = val;
+                op[op_val] = field;
+                query["bool"][bool_val].push(op);
+            }
+        });
+        return query;
     }
 
     var get_chk_val = function(){
@@ -187,36 +217,37 @@ var search = function () {
 
     // 计算字符串长度(英文占1个字符，中文汉字占2个字符)
     function strlen(str){
-      var len = 0;
-      for (var i=0; i<str.length; i++) {
-       var c = str.charCodeAt(i);
-      //单字节加1
-       if ((c >= 0x0001 && c <= 0x007e) || (0xff60<=c && c<=0xff9f)) {
-         len++;
-       }
-       else {
-        len+=2.2;
-       }
-      }
-      return len;
-  }
-  var HTMLEncode = function(html)
-  {
-      var temp = document.createElement ("div");
-      (temp.textContent != null) ? (temp.textContent = html) : (temp.innerText = html);
-      var output = temp.innerHTML;
-      temp = null;
-      return output;
-  }
+        if (str == null || str == "undefined") {
+          return 10;
+        }
+        var len = 0;
+        for (var i=0; i<str.length; i++) {
+         var c = str.charCodeAt(i);
+        //单字节加1
+         if ((c >= 0x0001 && c <= 0x007e) || (0xff60<=c && c<=0xff9f)) {
+           len++;
+         }
+         else {
+          len+=2.2;
+         }
+        }
+        return len;
+    }
+    var HTMLEncode = function(html){
+        var temp = document.createElement ("div");
+        (temp.textContent != null) ? (temp.textContent = html) : (temp.innerText = html);
+        var output = temp.innerHTML;
+        temp = null;
+        return output;
+    }
 
-  var HTMLDecode = function(text)
-  {
-      var temp = document.createElement("div");
-      temp.innerHTML = text;
-      var output = temp.innerText || temp.textContent;
-      temp = null;
-      return output;
-  }
+    var HTMLDecode = function(text){
+        var temp = document.createElement("div");
+        temp.innerHTML = text;
+        var output = temp.innerText || temp.textContent;
+        temp = null;
+        return output;
+    }
     // 初始化设置
     var handelControls = function () {
       // 搜索查询

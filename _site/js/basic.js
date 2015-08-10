@@ -31,20 +31,6 @@ var statistics = function () {
             $('#collapse_node_info .panel-body').html('');
             items = jsonToHtml(data);
 
-            /*$.each(data, function(key, val) {  // key是序号:1,2,...., val是遍历值.
-              items.push('<li id="' + key + '"><strong>'+key+'：</strong>');
-              if (typeof(val) === 'object') {
-                  items.push('<ul>');
-                  $.each(val, function(key1, val1) {
-                      items.push('<li id="' + key1 + '"><strong>'+key1+'：</strong>"' + val1 + '"</li>');
-                  });
-                  items.push('</ul>');
-              }else{
-                  items.push('"'+val+'"');
-              }
-              items.push('</li>');
-            });*/
-
             $('<ul/>', {
               'class': 'my-new-list',
               html: items.join('')
@@ -91,42 +77,6 @@ var statistics = function () {
               var items = [],docs=[];
               $('#collapse_index_info .panel-body').html('');
               items = jsonToHtml(data);
-              /*$.each(data, function(key, val) {  // key是序号:1,2,...., val是遍历值.
-                items.push('<li id="' + key + '"><strong>'+key+'：</strong>');
-                if (typeof(val) === 'object') {
-                    items.push('<ul>');
-                    $.each(val, function(key1, val1) {
-                        //items.push('<li id="' + key1 + '"><strong>'+key1+'：</strong>"' + val1 + '"</li>');
-                        items.push('<li id="' + key1 + '"><strong>'+key1+'：</strong>');
-                        if (typeof(val1) === 'object') {
-                            items.push('<ul>');
-                            $.each(val1, function(key2, val2) {
-                                //items.push('<li id="' + key2 + '"><strong>'+key2+'：</strong>"' + val2 + '"</li>');
-                                items.push('<li id="' + key2 + '"><strong>'+key2+'：</strong>');
-                                if (typeof(val2) === 'object') {
-                                    items.push('<ul>');
-                                    $.each(val2, function(key3, val3) {
-                                        items.push('<li id="' + key3 + '"><strong>'+key3+'：</strong>"' + val3 + '"</li>');
-                                    });
-                                    items.push('</ul>');
-                                }else{
-                                    items.push('"'+val2+'"');
-                                }
-                                items.push('</li>');
-                            });
-                            items.push('</ul>');
-                        }else{
-                            items.push('"'+val1+'"');
-                        }
-                        items.push('</li>');
-                    });
-                    items.push('</ul>');
-                }else{
-                    items.push('"'+val+'"');
-                }
-                items.push('</li>');
-
-              });*/
 
               docs.push(data["indices"]);
               set_docs_list(docs);
@@ -168,6 +118,8 @@ var statistics = function () {
 
         // 获取字段赋值控件
         $(".searchField").change(function(){
+          var op_sel = $(this).parents(".search-column");
+          op_sel.find(".searchInput").remove();
           set_field_operation(this);
         });
 
@@ -218,13 +170,19 @@ var statistics = function () {
       var parent=$(obj).parents("dd");
       var col1=parent.find(".search-column span:first");
       var col2=parent.find(".search-column span:last");
-      var _htm='<span>'+col1.html()+'<span>'+'<span>'+col2.html()+'<span>';
+      var _htm='<span>'+col1.html()+'</span>'+'<span>'+col2.html()+'</span>';
       //_htm=_htm.replace(btnHtml,"");
       $('<div/>', {
-        'class': 'search-column',
-        'style':'margin-bottom:10px;',
+        'class': 'search-column J_add_column',
         html:_htm
       }).appendTo(parent);
+
+      // 获取字段赋值控件
+      $(".searchField").change(function(){
+        var op_sel = $(this).parents(".search-column");
+        op_sel.find(".searchInput").remove();
+        set_field_operation(this);
+      });
       set_default();
     }
 
@@ -244,6 +202,9 @@ var statistics = function () {
             var mapping=parseJsonToField(data["metadata"]["indices"][sel_docs]);
             $(".searchField").html(mapping);
             $(".sortField").html(mapping);
+            $(".J_add_column").remove();
+            $(".J_add_operation").remove();
+            $(".J_add_input").remove();
             //layer.close(index);
           },
           error: function (res) {
@@ -281,9 +242,9 @@ var statistics = function () {
     var set_field_operation=function(obj){
       var that=$(obj);
       var val=that.val();
-      $(".searchOperation").parent("span").remove();
+      that.parents(".search-column").find(".span-Operation").remove();
       if (val.indexOf(".")>0) {
-        var _htm='<span class="span-Operation"><select class="searchOperation form-control pull-left" name="searchOperation" style="max-width:150px;">';
+        var _htm='<span class="span-Operation J_add_operation"><select class="searchOperation form-control pull-left" name="searchOperation" style="max-width:150px;">';
         _htm+='<option value="term">term</option>';
         _htm+='<option value="range">range</option>';
         _htm+='<option value="fuzzy">fuzzy</option>';
@@ -307,7 +268,11 @@ var statistics = function () {
       switch (val) {
         case "term":
         case "query_string":
-          _htm='<input type="text" class="searchInput form-control pull-left" name="searchInput" style="max-width:150px;" />';
+          _htm='<input type="text" class="searchInput form-control pull-left J_add_input" name="searchInput" style="max-width:150px;" />';
+          break;
+        case "term":
+        case "query_string":
+          _htm='<input type="text" class="searchInput form-control pull-left J_add_input" name="searchInput" style="max-width:150px;" />';
           break;
         default:
 
