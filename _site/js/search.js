@@ -67,8 +67,20 @@ var search = function () {
     		sortinfo = [sortfield];
     		postData.sort=sortinfo;
     	}
+      var query = {
+        bool:{
+          must:[],
+          must_not:[],
+          should:[]
+        }
+      };
       // 基本条件
-      postData.query = get_basic_condition();
+      var list_basic = $(".searchBasic .search-column");
+      postData.query = get_basic_condition(query, list_basic, true);
+      // 复合字段
+      var list_complex = $(".searchBasic .search-column");
+      postData.query = get_basic_condition(query, list_complex, false);
+
 
       var result = postData;
       $("#collapse_search_json .panel-body .my_search_json").html(jsonToHtml(result).join(''));
@@ -76,20 +88,23 @@ var search = function () {
       return result;
     }
 
-    // 获取基本查询条件
-    var get_basic_condition = function(){
-        var query = {
-          bool:{
-            must:[],
-            must_not:[],
-            should:[]
-          }
-        };
-        var list = $(".searchBasic .search-column");
+    // 获取查询条件
+    var get_basic_condition = function(query, list, is_basic){
         $.each(list,function(key,val){
+            var field = {}, op = {};
             var bool_val = $(this).find(".searchBool").val();
-            var field_val = $(this).find(".searchField").val();
+            var field_val = is_basic ? $(this).find(".searchField").val() : $(this).find(".searchFieldComplex").val();
+            var parent_field_val = "";
+            if (!is_basic && field_val) {
+                var arr = field_val.split(".");
+                if (arr.length > 2) {
+                    parent_field_val = arr[1];
+                    field_val = arr[2];
+                }
+            }
             var op_val = $(this).find(".searchOperation").val();
+            if (op_val) {
+
             switch (op_val) {
               case "term":
               case "prefix":
@@ -98,10 +113,8 @@ var search = function () {
                   var val = $(this).find(".searchInput").val();
                   if (op_val && val != null && val.length > 0) {
                       // 有该选项才是有用的操作条件
-                      var field = {}, op = {};
                       field[field_val] = ""+val;
                       op[op_val] = field;
-                      query["bool"][bool_val].push(op);
                   }
                   break;
               case "range":
@@ -110,7 +123,7 @@ var search = function () {
                 var op_val_left = $(this).find(".searchRangeLeft").val();
                 var op_val_right = $(this).find(".searchRangeRight").val();
                 if (op_val) {
-                    var field = {}, op = {}, range = {};
+                    var range = {};
                     //{"range":{"webfeed.author":{"from":"1","to":"2"}}}
                     if (val_left != null && val_left.length > 0) {
                         // 有该选项才是有用的操作条件
@@ -122,17 +135,43 @@ var search = function () {
                     }
                     field[field_val] = range;
                     op[op_val] = field;
-                    query["bool"][bool_val].push(op);
                 }
                 break;
               case "fuzzy":
 
                   break;
               case "missing":
+                  // {"constant_score":{"filter":{"missing":{"field":"webfeed.author"}}}}
+                  var missing = {};
+                  field = {"field" : field_val};
+                  missing["missing"] = field;
+                  op["constant_score"] = {"filter" : missing};
                   break;
               default:
                   break;
             }
+            if (is_basic) {
+                query["bool"][bool_val].push(op);
+            }else{
+                var query_complex = {
+                  bool:{
+                    must:[],
+                    must_not:[],
+                    should:[]
+                  }
+                };
+                if (query["bool"]["must"]["filtered"]["filter"]["query"]) {
+
+                }
+                query_complex["bool"][bool_val].push(op);
+                var nested = {}, filter = {}, filtered = {};
+                nested["query"] = query_complex;
+                nested["path"] = parent_field_val;
+                filter["filter"] = nested;
+                filtered["filtered"] = filter;
+                query["bool"]["must"] = filtered;
+            }
+          }
         });
         return query;
     }
@@ -151,6 +190,7 @@ var search = function () {
       var fields = get_chk_val();
       var index = layer.load(2, {time: 30*1000,shade: [0.8, '#393D49']});
       var sel_docs = $(".searchDocs").val();
+
       var postData = set_post_data(fields);
       $.ajax({
           type: "POST",

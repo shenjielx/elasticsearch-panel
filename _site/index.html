@@ -124,19 +124,23 @@
 							<dt><label class="form-label">复合字段：</label></dt>
 							<dd class="searchComplex">
 								<div class="search-column">
-									<select class="searchBool form-control pull-left" name="searchBool" style="max-width:110px;">
-										<option value="must">must</option>
-										<option value="must_not">must_not</option>
-										<option value="should">should</option>
-									</select>
-									<select class="searchFieldComplex form-control pull-left" name="searchFieldComplex" style="min-width:120px;max-width:320px;width:auto">
-										<option value="">请选择</option>
-									</select>
+									<span>
+										<select class="searchBool form-control pull-left" name="searchBool" style="max-width:110px;">
+											<option value="must">must</option>
+											<option value="must_not">must_not</option>
+											<option value="should">should</option>
+										</select>
+										<select class="searchFieldComplex form-control pull-left" name="searchFieldComplex" style="min-width:120px;max-width:320px;width:auto">
+											<option value="">请选择</option>
+										</select>
+									</span>
 									<span>
 										<button type="button" class="btn btn-primary btnAdd" data-loading-text="Loading..." autocomplete="off">添加条件</button>
 									</span>
-									<button type="button" class="btn btn-danger btnDel" data-loading-text="Loading..." autocomplete="off">删除</button>
-									<div class="clearfix"></div>
+									<span>
+										<button type="button" class="btn btn-danger btnDel" data-loading-text="Loading..." autocomplete="off">删除</button>
+										<div class="clearfix"></div>
+								</span>
 								</div>
 							</dd>
 						</dl>
