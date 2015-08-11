@@ -133,10 +133,17 @@ var statistics = function () {
     var set_default=function(){
         //删除条件行
         $(".btnDel").click(function(){
-          var len=$(this).parents("dd").children(".search-column").length;
-          if (len>1) {
-            var col=$(this).parents(".search-column");
-            col.remove();
+          var remove_col = $(this).parents(".J_add_column");
+          var that = $(this).parents(".search-column");
+          if (remove_col && remove_col.length > 0) {
+            remove_col.remove();
+          }else{
+            var field = that.find(".searchField");
+            field.val(field.children("option:first").val());
+            that.find(".J_add_operation").remove();
+            that.find(".J_add_input").remove();
+            that.find(".J_add_range").remove();
+            that.find(".J_add_fuzzy").remove();
           }
         });
     }
@@ -205,6 +212,8 @@ var statistics = function () {
             $(".J_add_column").remove();
             $(".J_add_operation").remove();
             $(".J_add_input").remove();
+            $(".J_add_range").remove();
+            $(".J_add_fuzzy").remove();
             //layer.close(index);
           },
           error: function (res) {
@@ -216,7 +225,8 @@ var statistics = function () {
 
     // 解析json
     var parseJsonToField = function collapse(data) {
-      var options=['<option value="match_all">match_all</option>'];
+      var options = ['<option value="match_all">match_all</option>'];
+      var complex = ['<option value="match_all">match_all</option>'];
       if (data) {
         var mapping=data["mappings"];
         var _chk_htm = '';// 设置该文档的所有字段
@@ -227,13 +237,18 @@ var statistics = function () {
             fileds_list.push(key_field);
             var filed=index+"."+key_field;
             var data_type=val_field["type"];
-            options.push('<option value="'+filed+'" data-type="'+data_type+'">'+filed+'</option>');
+            var temp_option = '<option value="'+filed+'" data-type="'+data_type+'">'+filed+'</option>';
+            options.push(temp_option);
+            if (filed.split(".").length > 2) {
+                complex.push(temp_option);
+            }
             _chk_htm += '<span class="col-md-2 col-xs-3 col-sm-4"><input type="checkbox" class="chkShowJson" checked="true" value="'+ key_field +'" /><label class="form-label">'+ key_field +'</label></span>';
           });
         });
         $("#collapse_field .panel-body").html(_chk_htm);
         set_default_fields();
       }
+      $(".searchFieldComplex").html(complex);
 
       return options.join(" ");
     }
@@ -244,11 +259,13 @@ var statistics = function () {
       var val=that.val();
       that.parents(".search-column").find(".span-Operation").remove();
       if (val.indexOf(".")>0) {
-        var _htm='<span class="span-Operation J_add_operation"><select class="searchOperation form-control pull-left" name="searchOperation" style="max-width:150px;">';
+        var _htm='<span class="span-Operation J_add_operation"><select class="searchOperation form-control pull-left" name="searchOperation" style="max-width:130px;">';
         _htm+='<option value="term">term</option>';
-        _htm+='<option value="range">range</option>';
         _htm+='<option value="fuzzy">fuzzy</option>';
+        _htm+='<option value="range">range</option>';
+        _htm+='<option value="prefix">prefix</option>';
         _htm+='<option value="query_string">query_string</option>';
+        _htm+='<option value="text">text</option>';
         _htm+='<option value="missing">missing</option></select>';
         _htm+='</select><span>';
 
@@ -267,17 +284,39 @@ var statistics = function () {
       var _htm='<span>';
       switch (val) {
         case "term":
+        case "prefix":
         case "query_string":
-          _htm='<input type="text" class="searchInput form-control pull-left J_add_input" name="searchInput" style="max-width:150px;" />';
+        case "text":
+            _htm='<input type="text" class="searchInput form-control pull-left J_add_input" name="searchInput" style="max-width:150px;" />';
+            break;
+        case "range":
+            _htm += '<span class="J_add_range"><select class="searchRangeLeft form-control pull-left" name="searchRangeLeft" style="max-width:80px;">';
+            _htm += '<option value="from">from</option>';
+            _htm += '<option value="gt">gt</option>';
+            _htm += '<option value="gte">gte</option>';
+            _htm += '</select><span>';
+            _htm += '<input type="text" class="searchInputLeft form-control pull-left J_add_input" name="searchInputLeft" style="max-width:150px;" />';
+            _htm += '<span class="J_add_range"><select class="searchRangeRight form-control pull-left" name="searchRangeRight" style="max-width:70px;">';
+            _htm += '<option value="to">to</option>';
+            _htm += '<option value="lt">lt</option>';
+            _htm += '<option value="lte">lte</option>';
+            _htm += '</select><span>';
+            _htm += '<input type="text" class="searchInputRight form-control pull-left J_add_input" name="searchInputRight" style="max-width:150px;" />';
           break;
-        case "term":
-        case "query_string":
-          _htm='<input type="text" class="searchInput form-control pull-left J_add_input" name="searchInput" style="max-width:150px;" />';
-          break;
+        case "fuzzy":
+            _htm += '<input type="text" class="searchInputLeft form-control pull-left J_add_input" name="searchInputLeft" style="max-width:150px;" />';
+            _htm += '<span class="J_add_fuzzy"><select class="searchFuzzy form-control pull-left" name="searchFuzzy" style="max-width:150px;">';
+            _htm += '<option value="max_expansions">max_expansions</option>';
+            _htm += '<option value="min_similarity">min_similarity</option>';
+            _htm += '</select><span>';
+            _htm += '<input type="text" class="searchInputRight form-control pull-left J_add_input" name="searchInputRight" style="max-width:150px;" />';
+            break;
+        case "missing":
+            break;
         default:
-
+            break;
       }
-      _htm+='<span>';
+      _htm += '<span>';
       return _htm;
     }
 

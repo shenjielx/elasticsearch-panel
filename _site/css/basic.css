@@ -164,6 +164,7 @@ thead tr th{
   width: auto;
 }
 tbody tr td{
+  white-space: nowrap;
   width: auto;
 }
 tbody tr td span{
@@ -183,4 +184,10 @@ ul{
 }
 .search-column{
   margin-bottom: 10px;
+}
+.dl-horizontal dd {
+    margin-left: 120px;
+}
+.dl-horizontal dt {
+    width: 100px;
 }

@@ -16,6 +16,25 @@ var search = function () {
     }
     //url=location.href;
 
+    // 解析json递归
+    var jsonToHtml = function(data){
+        var items = [];
+        for (var key in data) {
+            var val = data[key];
+            if (typeof(val) === 'object') {
+                items.push('<li id="' + key + '"><strong>'+key+'：</strong>');
+                items.push('<ul>');
+                var temp = jsonToHtml(val);
+                items = items.concat(temp);
+                items.push('</ul>');
+                items.push('</li>');
+            }else{
+                items.push('<li id="' + key + '"><strong>'+key+'：</strong>"' + val + '"</li>');
+            }
+        }
+        return items;
+    }
+
     var set_post_data = function (fields) {
       pageSize = $(".pageSize").val();
       var postData={
@@ -52,6 +71,7 @@ var search = function () {
       postData.query = get_basic_condition();
 
       var result = postData;
+      $("#collapse_search_json .panel-body .my_search_json").html(jsonToHtml(result).join(''));
       result = JSON.stringify(postData);
       return result;
     }
@@ -70,13 +90,48 @@ var search = function () {
             var bool_val = $(this).find(".searchBool").val();
             var field_val = $(this).find(".searchField").val();
             var op_val = $(this).find(".searchOperation").val();
-            var val = $(this).find(".searchInput").val();
-            if (op_val && val != null && val.length > 0) {
-                // 有该选项才是有用的操作条件
-                var field = {}, op = {};
-                field[field_val] = val;
-                op[op_val] = field;
-                query["bool"][bool_val].push(op);
+            switch (op_val) {
+              case "term":
+              case "prefix":
+              case "query_string":
+              case "text":
+                  var val = $(this).find(".searchInput").val();
+                  if (op_val && val != null && val.length > 0) {
+                      // 有该选项才是有用的操作条件
+                      var field = {}, op = {};
+                      field[field_val] = ""+val;
+                      op[op_val] = field;
+                      query["bool"][bool_val].push(op);
+                  }
+                  break;
+              case "range":
+                var val_left = $(this).find(".searchInputLeft").val();
+                var val_right = $(this).find(".searchInputRight").val();
+                var op_val_left = $(this).find(".searchRangeLeft").val();
+                var op_val_right = $(this).find(".searchRangeRight").val();
+                if (op_val) {
+                    var field = {}, op = {}, range = {};
+                    //{"range":{"webfeed.author":{"from":"1","to":"2"}}}
+                    if (val_left != null && val_left.length > 0) {
+                        // 有该选项才是有用的操作条件
+                        range[op_val_left] = val_left;
+                    }
+                    if (val_right != null && val_right.length > 0) {
+                        // 有该选项才是有用的操作条件
+                        range[op_val_right] = val_right;
+                    }
+                    field[field_val] = range;
+                    op[op_val] = field;
+                    query["bool"][bool_val].push(op);
+                }
+                break;
+              case "fuzzy":
+
+                  break;
+              case "missing":
+                  break;
+              default:
+                  break;
             }
         });
         return query;
@@ -152,13 +207,15 @@ var search = function () {
       var pager = [];
       if (total_page > 1) {
         var start = pageIndex > 5 ? (pageIndex - 2) : 0;
-        for (var i = start; i < start + 5; i++) {
+        var end = start + 5;
+        end = total_page > end? end : total_page;
+        for (var i = start; i < end; i++) {
           var active = i == pageIndex ? ' class="active"' : '';
           var pager_class = i != pageIndex ? ' class="J_pager"' : '';
           _htm += '<li'+ active +'><a'+ pager_class +' href="javascript:;" data-index="'+ i +'">'+ (i + 1) +'</a></li>';
         }
       }
-      if (pageIndex <= total_page && total_page > 1) {
+      if (pageIndex < total_page && total_page > 1) {
         _htm += '<li><a class="J_pager" href="javascript:;" data-index="'+ total_page +'" aria-label="Next"><span aria-hidden="last">下一页</span></a></li>';
           _htm += '<li><a class="J_pager" href="javascript:;" data-index="'+ total_page +'" aria-label="first"><span aria-hidden="true">尾页</span></a></li>';
       }
@@ -199,13 +256,10 @@ var search = function () {
           var val = '';
           if (field in filed_val) {
             val = filed_val[field];
-            val = val!=null&&typeof(filed_val[field]) === 'object'?"--":val;
-            if (val != null) {
-              var strlength = strlen(val);
-              var len = ' style="min-width:'+ (strlength * 9) +'px;"';
-            }
+            val = val != null && typeof(filed_val[field]) === 'object' ? JSON.stringify(val) : val;
+
           }
-          _tbody += '<td'+ len +'>'+ HTMLDecode(val).replace(/\s+/g,"").replace("<","&lt;").replace(">","&gt;") +'</td>';
+          _tbody += '<td>'+ escapeHTML(val) +'</td>';//.replace(/\s+/g,"")
         }
         _tbody += '</tr>';
       }
@@ -233,25 +287,29 @@ var search = function () {
         }
         return len;
     }
-    var HTMLEncode = function(html){
-        var temp = document.createElement ("div");
-        (temp.textContent != null) ? (temp.textContent = html) : (temp.innerText = html);
-        var output = temp.innerHTML;
-        temp = null;
-        return output;
-    }
 
-    var HTMLDecode = function(text){
-        var temp = document.createElement("div");
-        temp.innerHTML = text;
-        var output = temp.innerText || temp.textContent;
-        temp = null;
-        return output;
-    }
+    /**
+     * @function escapeHTML 转义html脚本 < > & " '
+     * @param a - 字符串
+     */
+    var escapeHTML = function(a){
+        a = "" + a;
+        return a.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");;
+    };
+    /**
+     * @function unescapeHTML 还原html脚本 < > & " '
+     * @param a - 字符串
+     */
+    var unescapeHTML = function(a){
+        a = "" + a;
+        return a.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&apos;/g, "'");
+    };
+
     // 初始化设置
     var handelControls = function () {
       // 搜索查询
       $("#btnSearch").click(function(){
+        pageIndex = 0;
         search();
       });
     }
