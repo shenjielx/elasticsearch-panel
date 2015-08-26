@@ -228,8 +228,8 @@ var statistics = function () {
       var options = ['<option value="match_all">match_all</option>'];
       var complex = ['<option value="match_all">match_all</option>'];
       if (data) {
+        fileds_list = new Array();
         var mapping=data["mappings"];
-        var _chk_htm = '';// 设置该文档的所有字段
         $.each(mapping, function(key_map, val_map) {
           var index=key_map;
           var fields=val_map["properties"];
@@ -242,14 +242,24 @@ var statistics = function () {
             if (filed.split(".").length > 2) {
                 complex.push(temp_option);
             }
-            _chk_htm += '<span class="col-md-2 col-xs-3 col-sm-4"><input type="checkbox" class="chkShowJson" checked="true" value="'+ key_field +'" /><label class="form-label">'+ key_field +'</label></span>';
           });
         });
+
+        fileds_list.sort();
+        var _chk_htm = '';// 设置该文档的所有字段
+        var i = 0;
+        $.each(fileds_list,function(k,v){
+            i++;
+            _chk_htm += '<span class="col-md-2 col-xs-3 col-sm-4"><input type="checkbox" class="chkShowJson" checked="true" id="' + i + '_' + v + '" value="'+ v +'" />';
+            _chk_htm += '<label for="' + i + '_' + v + '" class="form-label">'+ v +'</label></span>';
+        });
+
         $("#collapse_field .panel-body").html(_chk_htm);
         set_default_fields();
       }
       $(".searchFieldComplex").html(complex);
 
+      options.sort();
       return options.join(" ");
     }
 

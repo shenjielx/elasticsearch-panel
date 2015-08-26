@@ -56,7 +56,7 @@ var search = function () {
       };
       // 返回字段
       if (fields != null) {
-        postData["_source"] = fields;
+        postData["fields"] = fields;
       }
       // 排序
       var sortField = $(".sortField").val();
@@ -67,19 +67,12 @@ var search = function () {
     		sortinfo = [sortfield];
     		postData.sort=sortinfo;
     	}
-      var query = {
-        bool:{
-          must:[],
-          must_not:[],
-          should:[]
-        }
-      };
       // 基本条件
       var list_basic = $(".searchBasic .search-column");
-      postData.query = get_basic_condition(query, list_basic, true);
+      postData.query = get_basic_condition(list_basic);
       // 复合字段
-      var list_complex = $(".searchBasic .search-column");
-      postData.query = get_basic_condition(query, list_complex, false);
+      //var list_complex = $(".searchBasic .search-column");
+      //postData.query = get_basic_condition(query, list_complex, false);
 
 
       var result = postData;
@@ -89,87 +82,74 @@ var search = function () {
     }
 
     // 获取查询条件
-    var get_basic_condition = function(query, list, is_basic){
+    var get_basic_condition = function(list){
+        var query = {
+          bool:{
+            must:[
+              {
+                "match_all":{}
+              }
+            ],
+            must_not:[],
+            should:[]
+          }
+        };
         $.each(list,function(key,val){
             var field = {}, op = {};
             var bool_val = $(this).find(".searchBool").val();
-            var field_val = is_basic ? $(this).find(".searchField").val() : $(this).find(".searchFieldComplex").val();
-            var parent_field_val = "";
-            if (!is_basic && field_val) {
-                var arr = field_val.split(".");
-                if (arr.length > 2) {
-                    parent_field_val = arr[1];
-                    field_val = arr[2];
-                }
-            }
-            var op_val = $(this).find(".searchOperation").val();
-            if (op_val) {
+            var field_val = $(this).find(".searchField").val();
+            if (field_val!="match_all") {
 
-            switch (op_val) {
-              case "term":
-              case "prefix":
-              case "query_string":
-              case "text":
-                  var val = $(this).find(".searchInput").val();
-                  if (op_val && val != null && val.length > 0) {
-                      // 有该选项才是有用的操作条件
-                      field[field_val] = ""+val;
-                      op[op_val] = field;
-                  }
-                  break;
-              case "range":
-                var val_left = $(this).find(".searchInputLeft").val();
-                var val_right = $(this).find(".searchInputRight").val();
-                var op_val_left = $(this).find(".searchRangeLeft").val();
-                var op_val_right = $(this).find(".searchRangeRight").val();
-                if (op_val) {
-                    var range = {};
-                    //{"range":{"webfeed.author":{"from":"1","to":"2"}}}
-                    if (val_left != null && val_left.length > 0) {
-                        // 有该选项才是有用的操作条件
-                        range[op_val_left] = val_left;
-                    }
-                    if (val_right != null && val_right.length > 0) {
-                        // 有该选项才是有用的操作条件
-                        range[op_val_right] = val_right;
-                    }
-                    field[field_val] = range;
-                    op[op_val] = field;
-                }
-                break;
-              case "fuzzy":
+              var op_val = $(this).find(".searchOperation").val();
+              if (op_val) {
 
-                  break;
-              case "missing":
-                  // {"constant_score":{"filter":{"missing":{"field":"webfeed.author"}}}}
-                  var missing = {};
-                  field = {"field" : field_val};
-                  missing["missing"] = field;
-                  op["constant_score"] = {"filter" : missing};
-                  break;
-              default:
-                  break;
-            }
-            if (is_basic) {
+                switch (op_val) {
+                  case "term":
+                  case "prefix":
+                  case "query_string":
+                  case "text":
+                      var val = $(this).find(".searchInput").val();
+                      if (op_val && val != null && val.length > 0) {
+                          // 有该选项才是有用的操作条件
+                          field[field_val] = ""+val;
+                          op[op_val] = field;
+                      }
+                      break;
+                  case "range":
+                    var val_left = $(this).find(".searchInputLeft").val();
+                    var val_right = $(this).find(".searchInputRight").val();
+                    var op_val_left = $(this).find(".searchRangeLeft").val();
+                    var op_val_right = $(this).find(".searchRangeRight").val();
+                    if (op_val) {
+                        var range = {};
+                        //{"range":{"webfeed.author":{"from":"1","to":"2"}}}
+                        if (val_left != null && val_left.length > 0) {
+                            // 有该选项才是有用的操作条件
+                            range[op_val_left] = val_left;
+                        }
+                        if (val_right != null && val_right.length > 0) {
+                            // 有该选项才是有用的操作条件
+                            range[op_val_right] = val_right;
+                        }
+                        field[field_val] = range;
+                        op[op_val] = field;
+                    }
+                    break;
+                  case "fuzzy":
+
+                      break;
+                  case "missing":
+                      // {"constant_score":{"filter":{"missing":{"field":"webfeed.author"}}}}
+                      var missing = {};
+                      field = {"field" : field_val};
+                      missing["missing"] = field;
+                      op["constant_score"] = {"filter" : missing};
+                      break;
+                  default:
+                      break;
+                }
+
                 query["bool"][bool_val].push(op);
-            }else{
-                var query_complex = {
-                  bool:{
-                    must:[],
-                    must_not:[],
-                    should:[]
-                  }
-                };
-                if (query["bool"]["must"]["filtered"]["filter"]["query"]) {
-
-                }
-                query_complex["bool"][bool_val].push(op);
-                var nested = {}, filter = {}, filtered = {};
-                nested["query"] = query_complex;
-                nested["path"] = parent_field_val;
-                filter["filter"] = nested;
-                filtered["filtered"] = filter;
-                query["bool"]["must"] = filtered;
             }
           }
         });
@@ -288,7 +268,7 @@ var search = function () {
         _tbody += '<td class="J_flex" style="min-width:'+ (strlen(item["_type"]) * 10) +'px;">'+ item["_type"] +'</td>';
         _tbody += '<td class="J_flex" style="min-width:'+ (strlen(item["_id"]) * 10) +'px;">'+ item["_id"] +'</td>';
         _tbody += '<td class="J_flex" style="min-width:'+ (strlen(item["_score"]) * 10) +'px;">'+ item["_score"] +'</td>';
-        var filed_val = item["_source"];
+        var filed_val = item["fields"];
 
         for (var j = 0; j < fields.length; j++) {
           var field = fields[j];
