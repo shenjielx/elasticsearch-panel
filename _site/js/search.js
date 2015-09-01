@@ -69,9 +69,13 @@ var search = function () {
     	}
       // 基本条件
       var list_basic = $(".searchBasic .search-column");
-      postData.query = get_basic_condition(list_basic);
+      postData.query = get_basic_condition(list_basic , 'searchField');
       // 复合字段
-      //var list_complex = $(".searchBasic .search-column");
+      var list_complex = $(".searchComplex .search-column");
+      var list_complex_query = get_complex_condition(list_complex);
+      if (list_complex_query != null && list_complex_query.length > 0) {
+          postData.query.bool.must.push(list_complex_query);
+      }
       //postData.query = get_basic_condition(query, list_complex, false);
 
 
@@ -82,7 +86,7 @@ var search = function () {
     }
 
     // 获取查询条件
-    var get_basic_condition = function(list){
+    var get_basic_condition = function(list, fieldClass){
         var query = {
           bool:{
             must:[
@@ -94,12 +98,22 @@ var search = function () {
             should:[]
           }
         };
+        query = fieldClass == "searchField" ? query : {
+          bool:{
+            must:[
+              {
+                "match_all":{}
+              }
+            ]
+          }
+        };
         $.each(list,function(key,val){
+            var has_query = false;
             var field = {}, op = {};
             var bool_val = $(this).find(".searchBool").val();
-            var field_val = $(this).find(".searchField").val();
+            var field_val = $(this).find("." + fieldClass).val();
             if (field_val!="match_all") {
-
+              field_val = fieldClass == "searchFieldComplex" ? field_val.split('.')[2] : field_val;
               var op_val = $(this).find(".searchOperation").val();
               if (op_val) {
 
@@ -113,6 +127,7 @@ var search = function () {
                           // 有该选项才是有用的操作条件
                           field[field_val] = ""+val;
                           op[op_val] = field;
+                          has_query = true;
                       }
                       break;
                   case "range":
@@ -133,6 +148,7 @@ var search = function () {
                         }
                         field[field_val] = range;
                         op[op_val] = field;
+                        has_query = true;
                     }
                     break;
                   case "fuzzy":
@@ -144,17 +160,74 @@ var search = function () {
                       field = {"field" : field_val};
                       missing["missing"] = field;
                       op["constant_score"] = {"filter" : missing};
+                      has_query = true;
                       break;
                   default:
                       break;
                 }
-
-                query["bool"][bool_val].push(op);
+                if(has_query){
+                    query["bool"][bool_val].push(op);
+                }
             }
           }
         });
         return query;
     }
+
+    // 获取复合字段查询
+    var get_complex_condition = function(list){
+      var list_complex = new Array();
+      var arr = new Array();
+      $.each(list,function(key,val){
+        var field_val = $(this).find(".searchFieldComplex").val();
+        if (field_val!="match_all") {
+          var temp_arr = field_val.split('.');
+          var parent_field = field_val;
+          if (temp_arr.length > 2) {
+              parent_field = temp_arr[1];
+          }
+          var temp = new Array();
+          var isExists = false;
+          if (arr && arr.length > 0) {
+              $.each(arr,function(key,val){
+                  if(val['name'] == parent_field){
+                      temp = val;
+                      isExists = true;
+                  }
+              });
+          }
+          if(isExists){
+              temp['list'].push(this);
+          }else{
+              temp['name'] = parent_field;
+              temp['list'] = new Array();
+              temp['list'].push(this);
+              arr.push(temp);
+          }
+        }
+          //var query = get_basic_condition(key,"searchFieldComplex");
+      });
+      if (arr && arr.length > 0) {
+          $.each(arr,function(key,val){
+              var path = val.name;
+              var filtered = {
+                filtered:{
+                  filter:{
+                    nested:{
+                      query: {},
+                      path: path
+                    }
+                  }
+                }
+              };
+              var query = get_basic_condition(val.list,"searchFieldComplex");
+              filtered.filtered.filter.nested.query = query;
+              list_complex.push(filtered);
+          });
+      }
+      return list_complex;
+    }
+
 
     var get_chk_val = function(){
       var fields = [];

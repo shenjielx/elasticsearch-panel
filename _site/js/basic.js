@@ -117,7 +117,7 @@ var statistics = function () {
         });
 
         // 获取字段赋值控件
-        $(".searchField").change(function(){
+        $(".searchField,.searchFieldComplex").change(function(){
           var op_sel = $(this).parents(".search-column");
           op_sel.find(".searchInput").remove();
           set_field_operation(this);
@@ -139,7 +139,9 @@ var statistics = function () {
             remove_col.remove();
           }else{
             var field = that.find(".searchField");
-            field.val(field.children("option:first").val());
+            field && field.val(field.children("option:first").val());
+            var field_complex = that.find(".searchFieldComplex");
+            field_complex && field_complex.val(field_complex.children("option:first").val());
             that.find(".J_add_operation").remove();
             that.find(".J_add_input").remove();
             that.find(".J_add_range").remove();
@@ -185,7 +187,7 @@ var statistics = function () {
       }).appendTo(parent);
 
       // 获取字段赋值控件
-      $(".searchField").change(function(){
+      $(".searchField,.searchFieldComplex").change(function(){
         var op_sel = $(this).parents(".search-column");
         op_sel.find(".searchInput").remove();
         set_field_operation(this);
@@ -235,13 +237,21 @@ var statistics = function () {
           var fields=val_map["properties"];
           $.each(fields, function(key_field, val_field) {
             fileds_list.push(key_field);
-            var filed=index+"."+key_field;
-            var data_type=val_field["type"];
-            var temp_option = '<option value="'+filed+'" data-type="'+data_type+'">'+filed+'</option>';
-            options.push(temp_option);
-            if (filed.split(".").length > 2) {
-                complex.push(temp_option);
+            var sub_fields = val_field["properties"];
+            var filed = index+"."+key_field;
+            var data_type = val_field["type"];
+            if(data_type == "nested"){
+                $.each(sub_fields, function(key_sub, val_sub) {
+                    var sub_field = filed + "." + key_sub;
+                    var sub_data_type = val_field["type"];
+                    var temp_option = '<option value="' + sub_field + '" data-type="' + sub_data_type + '">' + sub_field + '</option>';
+                    complex.push(temp_option);
+                });
+            }else{
+                var temp_option = '<option value="'+filed+'" data-type="'+data_type+'">'+filed+'</option>';
+                options.push(temp_option);
             }
+
           });
         });
 
