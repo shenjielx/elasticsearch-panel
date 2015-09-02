@@ -62,11 +62,7 @@ var search = function () {
       var postData={
         query:{
           bool:{
-            must:[
-              {
-                match_all:{}
-              }
-            ],
+            must:[],
             must_not:[],
             should:[]
           }
@@ -96,7 +92,9 @@ var search = function () {
       var list_complex = $(".searchComplex .search-column");
       var list_complex_query = get_complex_condition(list_complex);
       if (list_complex_query != null && list_complex_query.length > 0) {
-          postData.query.bool.must.push(list_complex_query);
+          $each(list_complex_query,function(key, val){
+              postData.query.bool.must.push(val);
+          })
       }
       //postData.query = get_basic_condition(query, list_complex, false);
 
@@ -111,22 +109,14 @@ var search = function () {
     var get_basic_condition = function(list, fieldClass){
         var query = {
           bool:{
-            must:[
-              {
-                "match_all":{}
-              }
-            ],
+            must:[],
             must_not:[],
             should:[]
           }
         };
         query = fieldClass == "searchField" ? query : {
           bool:{
-            must:[
-              {
-                "match_all":{}
-              }
-            ]
+            must:[]
           }
         };
         $.each(list,function(key,val){
@@ -135,7 +125,7 @@ var search = function () {
             var bool_val = $(this).find(".searchBool").val();
             var field_val = $(this).find("." + fieldClass).val();
             if (field_val!="match_all") {
-              field_val = fieldClass == "searchFieldComplex" ? field_val.split('.')[2] : field_val;
+              field_val = fieldClass == "searchFieldComplex" ? field_val.split('.')[1] + '.' + field_val.split('.')[2] : field_val;
               var op_val = $(this).find(".searchOperation").val();
               if (op_val) {
 
@@ -191,6 +181,8 @@ var search = function () {
                     query["bool"][bool_val].push(op);
                 }
             }
+          }else{
+            query["bool"]["must"].push({"match_all":{}});
           }
         });
         return query;
