@@ -2,6 +2,28 @@ var search = function () {
     var url=$(".J_connectUrl").val();//"http://112.124.51.187:9200/";
     var pageIndex = 0;
     var pageSize = 10;
+    var showFields = "fields";
+
+    // 时间格式化
+    Date.prototype.format = function (format) {
+        var o = {
+            "M+": this.getMonth() + 1, //month
+            "d+": this.getDate(), //day
+            "h+": this.getHours(), //hour
+            "m+": this.getMinutes(), //minute
+            "s+": this.getSeconds(), //second
+            "q+": Math.floor((this.getMonth() + 3) / 3), //quarter
+            "S": this.getMilliseconds() //millisecond
+        }
+        if (/(y+)/.test(format)) format = format.replace(RegExp.$1,
+        (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o) if (new RegExp("(" + k + ")").test(format))
+            format = format.replace(RegExp.$1,
+            RegExp.$1.length == 1 ? o[k] :
+            ("00" + o[k]).substr(("" + o[k]).length));
+        return format;
+    }
+
     var get_url = function(){
       url = $(".J_connectUrl").val();
       if (location.href.indexOf("http://")>0) {
@@ -56,7 +78,7 @@ var search = function () {
       };
       // 返回字段
       if (fields != null) {
-        postData["fields"] = fields;
+        postData[showFields] = fields;
       }
       // 排序
       var sortField = $(".sortField").val();
@@ -252,7 +274,11 @@ var search = function () {
           url: url+sel_docs+"/_search",
           success: function (data) {
             var hits = data["hits"];
-
+            if((hits["hits"] == null || hits["hits"].length <= 0) && showFields != "_source"){
+                  showFields = "_source";
+                  search();
+                  return;
+            }
             // 获取table格式
             var _htm = '';
             _htm = get_table(hits["hits"],fields);
@@ -295,11 +321,11 @@ var search = function () {
       var total_page = Math.ceil(total / pageSize);
       if (pageIndex > 0) {
         _htm += '<li><a class="J_pager" href="javascript:;" data-index="0" aria-label="first"><span aria-hidden="true">首页</span></a></li>';
-        _htm += '<li><a class="J_pager" href="javascript:;" data-index="0" aria-label="Previous"><span aria-hidden="true">上一页</span></a></li>';
+        _htm += '<li><a class="J_pager" href="javascript:;" data-index="prev" aria-label="Previous"><span aria-hidden="true">上一页</span></a></li>';
       }
       var pager = [];
       if (total_page > 1) {
-        var start = pageIndex > 5 ? (pageIndex - 2) : 0;
+        var start = (pageIndex > 0 && pageIndex % 5 == 0) ? (pageIndex - 2) : 0;
         var end = start + 5;
         end = total_page > end? end : total_page;
         for (var i = start; i < end; i++) {
@@ -309,8 +335,8 @@ var search = function () {
         }
       }
       if (pageIndex < total_page && total_page > 1) {
-        _htm += '<li><a class="J_pager" href="javascript:;" data-index="'+ total_page +'" aria-label="Next"><span aria-hidden="last">下一页</span></a></li>';
-          _htm += '<li><a class="J_pager" href="javascript:;" data-index="'+ total_page +'" aria-label="first"><span aria-hidden="true">尾页</span></a></li>';
+          _htm += '<li><a class="J_pager" href="javascript:;" data-index="next" aria-label="Next"><span aria-hidden="last">下一页</span></a></li>';
+          _htm += '<li><a class="J_pager J_lastPage" href="javascript:;" data-index="'+ total_page +'" aria-label="first"><span aria-hidden="true">尾页</span></a></li>';
       }
       $(".pagination").html(_htm);
       set_pager_init();
@@ -341,16 +367,19 @@ var search = function () {
         _tbody += '<td class="J_flex" style="min-width:'+ (strlen(item["_type"]) * 10) +'px;">'+ item["_type"] +'</td>';
         _tbody += '<td class="J_flex" style="min-width:'+ (strlen(item["_id"]) * 10) +'px;">'+ item["_id"] +'</td>';
         _tbody += '<td class="J_flex" style="min-width:'+ (strlen(item["_score"]) * 10) +'px;">'+ item["_score"] +'</td>';
-        var filed_val = item["fields"];
+        var field_val = item[showFields];
 
         for (var j = 0; j < fields.length; j++) {
           var field = fields[j];
           var len = '';
           var val = '';
-          if (field in filed_val) {
-            val = filed_val[field];
-            val = val != null && typeof(filed_val[field]) === 'object' ? JSON.stringify(val) : val;
+          if (field in field_val) {
+            val = field_val[field];
+            val = val != null && typeof(field_val[field]) === 'object' ? JSON.stringify(val) : val;
 
+          }
+          if(field.indexOf('Time')){
+              //val = val.format('YYYY-MM-DD HH:mm:ss');
           }
           _tbody += '<td>'+ escapeHTML(val) +'</td>';//.replace(/\s+/g,"")
         }
@@ -410,7 +439,15 @@ var search = function () {
     // 分页初始化
     var set_pager_init = function(){
       $(".J_pager").click(function(){
-        pageIndex = $(this).data("index");
+        var curr = parseInt($(".pagination .active a").attr("data-index"));
+        var sel_index = $(this).data("index");
+        if (sel_index == "prev" && curr > 0) {
+            pageIndex = curr - 1;
+        }else if(sel_index == "next"){
+            pageIndex = curr + 1;
+        }else {
+            pageIndex = sel_index;
+        }
         search();
       })
     }

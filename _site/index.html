@@ -88,11 +88,11 @@
 
 				<div class="panel panel-default">
 				  <div class="panel-heading">
-						<select class="searchDocs form-control pull-left" name="searchDocs" style="max-width:320px;margin-top: -6px;">
+						<select class="searchDocs form-control" name="searchDocs" style="max-width:320px;margin-top: -6px;">
 							<option value="">请选择查询文档</option>
 						</select>
-						<input type="checkbox" class="chkShowJson" checked="true" />
-						<span class="form-label">显示查询语句</span>
+						<!--<input type="checkbox" class="chkShowJson" checked="true" />
+						<span class="form-label">显示查询语句</span>-->
 					</div>
 				  <div class="panel-body" style="padding-left:0px;padding-right:0px;padding-bottom:0px;">
 						<dl class="dl-horizontal">
@@ -168,10 +168,10 @@
 					<div class="panel panel-default">
 				    <div class="panel-heading" role="tab" id="headingOne">
 				      <h4 class="panel-title">
-				        <a role="button" data-toggle="collapse" data-parent="#accordion_json" href="#collapse_field" aria-expanded="true" aria-controls="collapse_field">
-				        	选择返回的字段(默认全部)
+				        <a role="button" data-toggle="collapse" data-parent="#accordion_json" href="#collapse_field" aria-expanded="true" aria-controls="collapse_field" style="text-decoration:underline;">
+				        	选择返回的字段 <span class="caret"></span>
 				        </a>
-								<input type="checkbox" class="J_chkFields" checked="true" />
+								<input type="checkbox" class="J_chkFields" checked="true" />(默认全部)
 				      </h4>
 				    </div>
 				    <div id="collapse_field" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">

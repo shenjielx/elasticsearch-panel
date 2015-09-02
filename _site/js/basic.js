@@ -199,6 +199,7 @@ var statistics = function () {
     var get_docs_mapping=function(){
       $("#search_time").text('--');
       $("#search_total").text('--');
+      $(".pagination").html('');
       $(".J_result").html('');
       //var index = layer.load(2, {time: 30*1000,shade: [0.8, '#393D49']});
       var sel_docs=$(".searchDocs").val();
@@ -227,8 +228,9 @@ var statistics = function () {
 
     // 解析json
     var parseJsonToField = function collapse(data) {
-      var options = ['<option value="match_all">match_all</option>'];
-      var complex = ['<option value="match_all">match_all</option>'];
+      var default_field = '<option value="match_all">match_all</option>';
+      var options = [];
+      var complex = [];
       if (data) {
         fileds_list = new Array();
         var mapping=data["mappings"];
@@ -267,10 +269,10 @@ var statistics = function () {
         $("#collapse_field .panel-body").html(_chk_htm);
         set_default_fields();
       }
-      $(".searchFieldComplex").html(complex);
+      $(".searchFieldComplex").html(default_field + " " + complex.join(" "));
 
       options.sort();
-      return options.join(" ");
+      return default_field + " " + options.join(" ");
     }
 
     // 设置字段赋值控件操作选项
