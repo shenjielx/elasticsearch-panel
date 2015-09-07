@@ -365,7 +365,7 @@ var search = function () {
           var field = fields[j];
           var len = '';
           var val = '';
-          if (field in field_val) {
+          if (field_val && field in field_val) {
             val = field_val[field];
             val = val != null && typeof(field_val[field]) === 'object' ? JSON.stringify(val) : val;
 
