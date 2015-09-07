@@ -128,6 +128,7 @@ var statistics = function () {
           add_column(this);
         });
         set_default();
+
     }
     // 设置部分初始化操作
     var set_default=function(){

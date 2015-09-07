@@ -273,8 +273,14 @@ var search = function () {
             }
             // 获取table格式
             var _htm = '';
-            _htm = get_table(hits["hits"],fields);
-            $(".J_result").html(_htm);
+            var val = $('.backFormat').val();
+            if(val == "table"){
+                _htm = get_table(hits["hits"],fields);
+                $(".J_result").html(_htm);
+            }else if(val == "json"){
+                var _json =  JSON.stringify(hits["hits"]);
+                jsonFormat.init(_json);
+            }
 
             // 查询耗时
             var time = parseFloat(data["took"])/1000;
