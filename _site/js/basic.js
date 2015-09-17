@@ -284,6 +284,7 @@ var statistics = function () {
       if (val.indexOf(".")>0) {
         var _htm='<span class="span-Operation J_add_operation"><select class="searchOperation form-control pull-left" name="searchOperation" style="max-width:130px;">';
         _htm+='<option value="term">term</option>';
+        _htm+='<option value="wildcard">wildcard</option>';
         _htm+='<option value="fuzzy">fuzzy</option>';
         _htm+='<option value="range">range</option>';
         _htm+='<option value="prefix">prefix</option>';
@@ -307,6 +308,7 @@ var statistics = function () {
       var _htm='<span>';
       switch (val) {
         case "term":
+        case "wildcard":
         case "prefix":
         case "query_string":
         case "text":
