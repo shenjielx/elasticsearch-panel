@@ -131,6 +131,7 @@ var search = function () {
 
                 switch (op_val) {
                   case "term":
+                  case "wildcard":
                   case "prefix":
                   case "query_string":
                   case "text":
