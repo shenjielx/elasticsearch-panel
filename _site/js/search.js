@@ -133,13 +133,26 @@ var search = function () {
                   case "term":
                   case "wildcard":
                   case "prefix":
-                  case "query_string":
+                  //case "query_string":
                   case "text":
                       var val = $(this).find(".searchInput").val();
                       if (op_val && val != null && val.length > 0) {
                           // 有该选项才是有用的操作条件
                           field[field_val] = ""+val;
                           op[op_val] = field;
+                          has_query = true;
+                      }
+                      break;
+                  case "query_string":
+                      var val = $(this).find(".searchInput").val();
+                      if (op_val && val != null && val.length > 0) {
+                          var query_string = {
+                              default_field : field_val,
+                              query : val
+                          };
+                          // 有该选项才是有用的操作条件
+                          //field[field_val] = ""+val;
+                          op[op_val] = query_string;
                           has_query = true;
                       }
                       break;
