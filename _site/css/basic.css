@@ -8,6 +8,10 @@ a, a:hover, a:active {
     text-decoration: none;
 }
 
+dl {
+    margin-bottom: 0;
+}
+
 .container {
     border-radius: 0px;
     padding-left: 0px;
@@ -68,6 +72,12 @@ a, a:hover, a:active {
     border:0px;
     border-radius: 0px;
     border-bottom:1px solid #eee;
+    padding-bottom: 2px;
+    padding-top: 8px;
+}
+.panel-footer{
+    padding-bottom: 2px;
+    padding-top: 2px;
 }
 .list-group .list-group-item{
     border: 0px;
