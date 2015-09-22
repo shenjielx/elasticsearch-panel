@@ -129,6 +129,24 @@ var statistics = function () {
         });
         set_default();
 
+        $("#J_tips").click(function(){
+          layer.tips($("#J_tipsContent").html(), '#J_tips', {
+              tips: [2, '#3595CC'],
+              time: 0,
+              closeBtn: 1,
+              maxWidth: '540px',
+              area: 'auto'
+          });
+        });
+        $("#J_tipsFormat").click(function(){
+          layer.tips($("#J_tipsFormatContent").html(), '#J_tipsFormat', {
+              tips: [2, '#3595CC'],
+              time: 0,
+              closeBtn: 1,
+              maxWidth: '540px',
+              area: 'auto'
+          });
+        });
     }
     // 设置部分初始化操作
     var set_default=function(){

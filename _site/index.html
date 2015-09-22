@@ -19,6 +19,8 @@
 				<h1 style="padding-left:2%; padding-right:2%;">
 					<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
 					<span> elasticsearch-panel</span>
+					<span id="J_tips" aria-hidden="true" class="glyphicon glyphicon-question-sign" title="查询类型小提示" style="color: rgb(255, 153, 0);cursor: pointer;"></span>
+					<span id="J_tipsFormat" aria-hidden="true" class="glyphicon glyphicon-info-sign" title="查询格式小提示" style="color: #3595CC;cursor: pointer;"></span>
 
 					<label class="form-label pull-right J_connectWarning" style="color:red;"></label>
 					<button type="button" class="btn btn-primary btnConnect pull-right" data-loading-text="Loading..." autocomplete="off">连接</button>
@@ -149,19 +151,6 @@
 						</dl>
 
 				  </div>
-					<div class="panel-footer">
-						<div>
-							<label class="form-label pull-left">排序字段：</label>
-							<select class="sortField form-control pull-left" name="sortField" style="min-width:120px;max-width:300px;width:auto">
-								<option value="">请选择</option>
-							</select>
-							<label class="form-label pull-left">排序类型：</label>
-							<select class="sortType form-control" name="sortType" style="max-width:130px;">
-								<option value="desc">降序[DESC]</option>
-								<option value="asc">升序[ASC]</option>
-							</select>
-						</div>
-					</div>
 				</div>
 
 				<div class="clearfix"></div>
@@ -169,15 +158,25 @@
 				<div class="panel-group" id="accordion_json" role="tablist" aria-multiselectable="true" style="margin-bottom: 10px;">
 
 					<div class="panel panel-default">
-				    <div class="panel-heading" role="tab" id="headingOne">
+				    <div class="panel-heading" role="tab" id="headingOne" style="padding-bottom:15px;">
 				      <h4 class="panel-title">
+									<label class="form-label pull-left">排序字段：</label>
+									<select class="sortField form-control pull-left" name="sortField" style="min-width:120px;max-width:300px;width:auto">
+										<option value="">请选择</option>
+									</select>
+									<label class="form-label pull-left">排序类型：</label>
+									<select class="sortType form-control pull-left" name="sortType" style="max-width:130px;">
+										<option value="desc">降序[DESC]</option>
+										<option value="asc">升序[ASC]</option>
+									</select>
+
 				        <a role="button" data-toggle="collapse" data-parent="#accordion_json" href="#collapse_field" aria-expanded="true" aria-controls="collapse_field" style="text-decoration:underline;">
 				        	选择返回的字段 <span class="caret"></span>
 				        </a>
 								<input type="checkbox" class="J_chkFields" checked="true" />(默认全部)
 				      </h4>
 				    </div>
-				    <div id="collapse_field" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+				    <div id="collapse_field" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" style="clear: both;">
 				      <div class="panel-body">
 
 				      </div>
@@ -187,32 +186,33 @@
 				</div>
 				<div class="clearfix"></div>
 
-				<div style="margin-bottom:10px;">
-					<label class="form-label pull-left">返回格式：</label>
-					<select class="backFormat form-control pull-left" name="backFormat" style="max-width:90px;">
-						<option value="table">Table</option>
-						<option value="json">JSON</option>
-						<!--<option value="csv">CSV</option>-->
-					</select>
-					<label class="form-label pull-left">每页显示数量：</label>
-					<select class="pageSize form-control pull-left" name="pageSize" style="max-width:90px;">
-						<option value="10">10</option>
-						<option value="20">20</option>
-						<option value="50">50</option>
-						<option value="250">250</option>
-						<option value="1000">1000</option>
-						<option value="5000">5000</option>
-						<option value="25000">25000</option>
-					</select>
-					<button type="button" id="btnSearch" data-loading-text="Loading..."  class="btn btn-primary col-md-4 col-xs-5 col-sm-6" autocomplete="off" style="float: none;">查询</button>
-				</div>
-
 				<div class="panel panel-default">
 				  <div class="panel-heading">
-						<span><label> 查询总数：</label><span id="search_total">--</span>条</span>
-						<span style="color:grey;margin-left:20px;"> 耗时：<span id="search_time">--</span>秒</span>
+
+							<label class="form-label pull-left">返回格式：</label>
+							<select class="backFormat form-control pull-left" name="backFormat" style="max-width:90px;">
+								<option value="table">Table</option>
+								<option value="json">JSON</option>
+								<!--<option value="csv">CSV</option>-->
+							</select>
+							<label class="form-label pull-left">每页显示数量：</label>
+							<select class="pageSize form-control pull-left" name="pageSize" style="max-width:90px;">
+								<option value="10">10</option>
+								<option value="20">20</option>
+								<option value="50">50</option>
+								<option value="250">250</option>
+								<option value="1000">1000</option>
+								<option value="5000">5000</option>
+								<option value="25000">25000</option>
+							</select>
+							<button type="button" id="btnSearch" data-loading-text="Loading..."  class="btn btn-primary col-md-3 col-xs-4 col-sm-5" autocomplete="off" style="float: none;">查询</button>
+
+							<span class="pull-right">
+									<span><label> 查询总数：</label><span id="search_total">--</span>条</span>
+									<span style="color:grey;margin-left:20px;"> 耗时：<span id="search_time">--</span>秒</span>
+							</span>
 					</div>
-				  <div class="panel-body J_result" style="padding: 10px 0px;overflow-x: scroll;">
+				  <div class="panel-body J_result" style="padding: 10px 0px;overflow-x: scroll;clear: both;">
 
 				  </div>
 					<div class="panel-footer">
@@ -229,6 +229,63 @@
 
 		</div>
 
+
+				<div id="J_tipsContent" class="hide">
+						<div style="display: block;width: auto;min-width: 450px;">
+								<p>
+										<dl class="dl-horizontal">
+												<dt><label class="form-label">term：</label></dt>
+												<dd style="padding-top: 12px;">用于精确查询。</dd>
+										</dl>
+										<dl class="dl-horizontal">
+												<dt><label class="form-label">range：</label></dt>
+												<dd style="padding-top: 12px;">用于范围查询。</dd>
+										</dl>
+										<dl class="dl-horizontal">
+												<dt><label class="form-label">wildcard：</label></dt>
+												<dd style="padding-top: 12px;">
+														<p>用于通配符查询，通配符有*，？ ，*表示任意字符/字符串（可以为空） ，？表示一个字符。</p>
+														<p>如*a*， 可以匹配到a，ba，ac，bac ，a?可以匹配ab，ac。。。</p>
+												</dd>
+										</dl>
+										<dl class="dl-horizontal">
+												<dt><label class="form-label">prefix：</label></dt>
+												<dd style="padding-top: 12px;">用于前缀查询，类似wildcardQuery的 a*。</dd>
+										</dl>
+										<dl class="dl-horizontal">
+												<dt><label class="form-label">missing：</label></dt>
+												<dd style="padding-top: 12px;">
+														<p>1.没有该字段；</p>
+														<p>2.该字段没有值；</p>
+														<p>3.该字段没有除了null之外的值 （"",和"null"都不算missing）。</p>
+												</dd>
+										</dl>
+										<dl class="dl-horizontal">
+												<dt><label class="form-label">query_string：</label></dt>
+												<dd style="padding-top: 12px;">
+														<p>1."*",双引号+内容，去匹配所有field的该内容；</p>
+														<p>2.a:b, 等同于TermQuery("a","b") ；</p>
+														<p>3.a AND/OR b 条件a和条件b的逻辑组合。</p>
+												</dd>
+										</dl>
+										<dl class="dl-horizontal">
+												<dt><label class="form-label">fuzzy：</label></dt>
+												<dd style="padding-top: 12px;">用于模糊查询，需要设定。</dd>
+										</dl>
+								</p>
+						</div>
+				</div>
+
+				<div id="J_tipsFormatContent" class="hide">
+						<div style="display: block;width: auto;min-width: 450px;">
+								<p>
+										<dl class="dl-horizontal">
+												<dt><label class="form-label">时间类型：</label></dt>
+												<dd style="padding-top: 12px;">格式：0000-00-00T00:00:00.000Z</dd>
+										</dl>
+								</p>
+						</div>
+				</div>
 
 		<script src="./layer/layer.js"></script>
 		<script src="./js/basic.js"></script>
